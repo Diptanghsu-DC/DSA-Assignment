@@ -1,48 +1,64 @@
+/*Write a program to add two very large numbers. Also, analyze the time and space complexity.
+Each number is represented as a string, and its upper limit is 1024 digits*/
+
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
-char *adder(char *num1, char *num2, char *ans)
+char *add_strings(char *num1, char *num2, char *result)
 {
-    int total;
-    int sum = 0;
-    int carry = 0;
-    int num1_length = strlen(num1);
-    int num2_length = strlen(num2);
-    int i = num1_length - 1;
-    int k = 1024;
+    int len1 = strlen(num1);                                   // Get the length of the first number
+    int len2 = strlen(num2);                                   // Get the length of the second number
+    int carry = 0;                                             // Initialize the carry to 0
+    int k = 0;                                                 // Initialize the result index to 0
+    int i = len1 - 1;                                          // Start from the last digit of the first number
+    int j = len2 - 1;                                          // Start from the last digit of the second number
 
-    for (int j = num2_length - 1; j >= 0; i--, j--, k--)
-    {
-        total = num1[i] + num2[j] + carry;
-        sum = (total % 10);
-        carry = total / 10;
-        ans[k] = sum;
-    }
-    i--;
-    k--;
-    for (; i >= 0; i--, k--)
-    {
-        total = num1[i] + carry;
-        sum = (total % 10);
-        carry = total / 10;
-        ans[k] = sum;
+    while (i >= 0 || j >= 0)
+    {                                                          // While there are digits left in either number
+        int sum = carry;                                       // Add the carry to the sum
+
+        if (i >= 0)
+        {                                                      // If there are digits left in the first number
+            sum += num1[i] - '0';                              // Add the current digit of the first number to the sum
+            i--;                                               // Move to the next digit of the first number
+        }
+
+        if (j >= 0)
+        {                                                      // If there are digits left in the second number
+            sum += num2[j] - '0';                              // Add the current digit of the second number to the sum
+            j--;                                               // Move to the next digit of the second number
+        }
+
+        carry = sum / 10;                                      // Compute the new carry
+
+        result[k++] = (sum % 10) + '0';                        // Store the current digit of the result
     }
 
-    return ans;
+    if (carry)
+    {                                                          // If there is a final carry
+        result[k++] = carry + '0';                             // Store it as the last digit of the result
+    }
+
+    result[k] = '\0';                                          // Terminate the result string
+    strrev(result);                                            // Reverse the result string to get the final result
+    return result;
 }
 
-int main(int argc, char const *argv[])
+int main()
 {
-    char num1[1025];
-    char num2[1025];
-    char ans[1025];
+    char num1[1025], num2[1025], result[1025];
 
-    scanf("%s", &num1);
-    scanf("%s", &num2);
+    printf("Enter first number: ");
+    scanf("%s", num1);
 
+    printf("Enter second number: ");
+    scanf("%s", num2);
 
-    printf("%s \n", adder(num1, num2, ans));
+    printf("Sum: %s\n", add_strings(num1, num2, result));      // Call add_strings to compute and print the sum of the two numbers
 
     return 0;
 }
+
+
+// Time Complexity : O(n), where n is the length of the longer input number
+// Space Complexity : O(n), where n is the length of the longer input number
